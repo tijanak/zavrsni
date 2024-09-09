@@ -1,9 +1,9 @@
-export interface Post {
+export interface IPost {
   id: number;
   title: string;
   body: string;
   looking_for: boolean;
-  user: IUser;
+  creator: IUser;
   images: IImage[];
 }
 export interface IUser {
@@ -12,10 +12,10 @@ export interface IUser {
   surname: string;
   email: string;
   phone_number: string;
-  posts: Post[];
+  posts: IPost[];
 }
 export interface IImage {
   id: number;
   fileName: string;
-  post: Post;
+  post: IPost;
 }

@@ -1,18 +1,33 @@
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { environment } from '@dog-finder/environment';
 
-import { AppModule } from './app/app.module';
+import cookieParser from 'cookie-parser';
+import { AppModule } from './modules/app/app.module';
+import { exceptionFactory } from './validation/exception-factory';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
+  app.enableCors({
+    origin: ['http://localhost:4200'],
+    methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
+    credentials: true,
+  });
   const port = environment.PORT || 3000;
-  await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
+  app.useLogger(['error', 'warn', 'log', 'debug', 'verbose']);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      stopAtFirstError: true,
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transformOptions: { enableImplicitConversion: true },
+      exceptionFactory: exceptionFactory,
+    })
   );
+  app.use(cookieParser());
+  await app.listen(port);
+  Logger.log(`🚀 Application is running on: http://localhost:${port}/`);
 }
 
 bootstrap();

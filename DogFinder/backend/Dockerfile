@@ -14,4 +14,4 @@ RUN npm install -g nodemon
 RUN npm i nx@19.5.6
 RUN npx nx build backend --prod
 RUN npx nx reset
-CMD ["nodemon","-L", "--watch", "backend/src", "--exec", "npx nx serve backend"]
+CMD ["nodemon","-L", "--watch", "backend/src/**", "--exec", "npx nx serve backend"]
