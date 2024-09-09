@@ -14,7 +14,10 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@dog-finder/environment": ["environment/src/index.ts"],
+      "@dog-finder/models": ["models/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

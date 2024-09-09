@@ -1,0 +1,87 @@
+services:
+  db:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+    volumes:
+      - dogfinder_pgdata:/var/lib/postgresql/data
+  dognn:
+    image: dognn
+    restart: always
+    build:
+      context: ./dognn/
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    shm_size: '64gb'
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    develop:
+      watch:
+        - action: rebuild
+          path: ./dognn/requirements.txt
+        - action: sync
+          path: ./dognn/
+          target: /app/
+    volumes:
+      - dogfinder_dognn_data:/app/
+  backend:
+    image: dogfinder_backend
+    restart: always
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+
+    environment:
+      NODE_ENV: production
+      NX_POSTGRES_HOST: db
+      NX_PORT: 4100
+    depends_on:
+      - db
+      - dognn
+
+    ports:
+      - 4100:4100
+    develop:
+      watch:
+        - action: rebuild
+          path: package.json
+        - action: sync
+          path: ./
+          target: /usr/src/app/
+    volumes:
+      - ./:/usr/src/app/
+      - dogfinder_backend_data:/usr/src/app/
+  frontend:
+    image: dogfinder_frontend
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: production
+      NX_PORT: 4100
+    ports:
+      - 4200:4200
+    develop:
+      watch:
+        - action: rebuild
+          path: package.json
+        - action: sync
+          path: ./
+          target: /usr/src/app/
+    volumes:
+      - ./:/usr/src/app/
+      - dogfinder_frontend_data:/usr/src/app/
+volumes:
+  dogfinder_pgdata:
+  dogfinder_backend_data:
+  dogfinder_frontend_data:
+  dogfinder_dognn_data:

@@ -1,0 +1,19 @@
+{
+  "name": "environment",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "environment/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/environment",
+        "main": "environment/src/index.ts",
+        "tsConfig": "environment/tsconfig.lib.json",
+        "assets": ["environment/*.md"]
+      }
+    }
+  }
+}
