@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  height: 100vh;
+}
+
+.left {
+  flex: 1 1 auto;
+}
+
+.right {
+  flex: 1 1 auto;
+}

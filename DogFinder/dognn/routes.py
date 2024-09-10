@@ -10,7 +10,7 @@ imageLoader = ImageLoader()
 # routes.py
 from app import app
 from flask import jsonify
-from db.query import get_post, get_opposite_post_images, get_post_images
+from db.query import get_post, get_images_from_posts, get_post_images,get_opposite_posts,get_posts_with_ids
 from model.similarity import find_similarities
 
 @app.route('/matches/<int:post_id>', methods=['GET'])
@@ -18,13 +18,18 @@ def get_similarities(post_id):
     try:
         post=get_post(post_id)
         post_vectors=get_post_images(post)
-        database_vectors=get_opposite_post_images(post)
+        opposite_posts=get_opposite_posts(post)
+        database_vectors=get_images_from_posts(opposite_posts)
         if(len(post_vectors)==0):
             result=[]
         else:
             result=find_similarities(database_vectors,post_vectors[0]['vector'])
+        ids = [item['id'] for item in result] 
+        posts=get_posts_with_ids(ids)
+        result = [post.to_dict() for post in posts]
         return jsonify(result)
     except Exception as e:
+        app.logger.error(e)
         return jsonify({"error": str(e)}), 500
 
 @app.route('/search',methods=['POST'])

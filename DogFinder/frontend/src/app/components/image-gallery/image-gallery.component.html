@@ -1,0 +1,39 @@
+<div
+  *ngIf="
+    images != null && images != undefined && images.length > 0;
+    else emptyImages
+  "
+>
+  <c-carousel
+    *ngIf="isVisible"
+    [wrap]="false"
+    [animate]="false"
+    [dark]="true"
+    [interval]="0"
+    [activeIndex]="0"
+  >
+    <c-carousel-inner>
+      <ng-container *ngFor="let image of images">
+        <c-carousel-item *ngIf="image.fileName">
+          <img
+            [src]="imageBaseUrl + image.fileName"
+            alt="{{ image.fileName }}"
+            class="d-block w-100"
+          /> </c-carousel-item
+      ></ng-container>
+    </c-carousel-inner>
+    <c-carousel-control
+      [routerLink]
+      caption="Previous"
+      direction="prev"
+    ></c-carousel-control>
+    <c-carousel-control
+      [routerLink]
+      caption="Next"
+      direction="next"
+    ></c-carousel-control>
+  </c-carousel>
+</div>
+<ng-template #emptyImages
+  ><img src="empty.jpg" style="display: block"
+/></ng-template>

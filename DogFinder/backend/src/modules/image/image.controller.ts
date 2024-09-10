@@ -94,7 +94,7 @@ export class ImagesController {
     return this.imageService.delete(id);
   }
   @Get('post/:id')
-  async getForAuction(@Param('id', ParseIntPipe) id: number) {
+  async getForPost(@Param('id', ParseIntPipe) id: number) {
     return this.imageService.findImagesByPostId(id);
   }
   @Get(':filename')

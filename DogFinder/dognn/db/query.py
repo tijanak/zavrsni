@@ -18,6 +18,35 @@ def get_post(post_id):
         return post
     except Exception as e:
         raise e
+def get_opposite_posts(post):
+    try:
+        if post is None:
+            raise Exception({"error": "Post not found"})
+        opposite_looking_for = not post.looking_for
+
+        opposite_posts = Post.query.filter_by(looking_for=opposite_looking_for).all()
+        return opposite_posts
+    except Exception as e:
+        raise e
+def get_posts_with_ids(ids):
+    try:
+        posts = Post.query.filter(Post.id.in_(ids)).all()
+        
+        
+        return posts
+    except Exception as e:
+        raise e
+def get_images_from_posts(posts):
+    try:
+        result = []
+        for post in posts:
+            for image in get_post_images(post):
+                result.append(image)
+        
+        return result
+
+    except Exception as e:
+        raise e
 def get_opposite_post_images(post):
     try:
         if post is None:

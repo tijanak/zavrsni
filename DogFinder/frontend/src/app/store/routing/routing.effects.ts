@@ -2,16 +2,17 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ROUTER_NAVIGATED, RouterNavigatedAction } from '@ngrx/router-store';
 import { filter, mergeMap } from 'rxjs/operators';
+import { loadPost, loadPostMatches, loadPosts } from '../post/post.actions';
 
 @Injectable()
 export class RouteEffects {
   constructor(private actions$: Actions) {}
 
-  /*navigationToAuction$ = createEffect(() =>
+  navigationToAuction$ = createEffect(() =>
     this.actions$.pipe(
       ofType<RouterNavigatedAction>(ROUTER_NAVIGATED),
       filter((action) =>
-        /^\/auction\/\d+$/.test(action.payload.routerState.url)
+        /^\/view-post\/\d+$/.test(action.payload.routerState.url)
       ),
 
       mergeMap((action) => {
@@ -19,7 +20,7 @@ export class RouteEffects {
         console.log(routeParams);
         const id = routeParams['id'];
 
-        return [LoadAuction({ id }), LoadBidsForAuction({ auctionId: id })];
+        return [loadPost({ id }), loadPostMatches({ id })];
       })
     )
   );
@@ -29,30 +30,8 @@ export class RouteEffects {
       filter((action) => action.payload.routerState.url === '/home'),
 
       mergeMap(() => {
-        return [LoadAuctions()];
+        return [loadPosts()];
       })
     )
   );
-  navigationToCertificate$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType<RouterNavigatedAction>(ROUTER_NAVIGATED),
-      filter(
-        (action) => action.payload.routerState.url === '/sale-certificates'
-      ),
-
-      mergeMap(() => {
-        return [loadSaleCertificates()];
-      })
-    )
-  );
-  navigationToProfile$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType<RouterNavigatedAction>(ROUTER_NAVIGATED),
-      filter((action) => action.payload.routerState.url === '/profile'),
-
-      mergeMap(() => {
-        return [LoadBidsForUser(), LoadAuctionsForUser()];
-      })
-    )
-  );*/
 }

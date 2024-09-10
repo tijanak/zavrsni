@@ -22,6 +22,7 @@ export class ImageService {
   async findImagesByPostId(postId: number): Promise<Image[]> {
     const images = await this.imageRepo.find({
       where: { post: { id: postId } },
+      relations: ['post'],
     });
 
     return images;

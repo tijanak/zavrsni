@@ -1,1 +1,10 @@
-home
+<div style="display: flex; flex-direction: row; width: 100%">
+  <div style="flex: 1 1 auto">
+    <h2>Traze se</h2>
+    <app-posts [posts]="lostPosts"></app-posts>
+  </div>
+  <div style="flex: 1 1 auto">
+    <h2>Pronadjeni</h2>
+    <app-posts [posts]="foundPosts"></app-posts>
+  </div>
+</div>

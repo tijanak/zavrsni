@@ -1,0 +1,3 @@
+<div *ngFor="let post of posts" (click)="openPost(post.id)">
+  <app-post [post]="post"></app-post>
+</div>

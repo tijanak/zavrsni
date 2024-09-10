@@ -22,6 +22,13 @@ class Post(db.Model):
     creator = db.relationship('User', back_populates='posts')
 
     images = db.relationship('Image', back_populates='post')
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'body': self.body,
+            'looking_for': self.looking_for
+        }
 
 class Image(db.Model):
     __tablename__ = 'image'
