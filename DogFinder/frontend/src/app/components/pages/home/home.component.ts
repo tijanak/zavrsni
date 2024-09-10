@@ -12,6 +12,8 @@ import {
   selectLostPosts,
 } from 'frontend/src/app/store/post/post.selectors';
 import { PostsComponent } from '../../posts/posts.component';
+import { LostPostBtnComponent } from '../../../lost-post-btn/lost-post-btn.component';
+import { FoundPostBtnComponent } from '../../../found-post-btn/found-post-btn.component';
 
 @Component({
   selector: 'app-home',
@@ -22,6 +24,8 @@ import { PostsComponent } from '../../posts/posts.component';
     RouterModule,
     LogoutComponent,
     PostsComponent,
+    LostPostBtnComponent,
+    FoundPostBtnComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',

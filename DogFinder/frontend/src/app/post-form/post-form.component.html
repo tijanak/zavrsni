@@ -1,0 +1,39 @@
+<h1 mat-dialog-title>Nova objava</h1>
+<div mat-dialog-content>
+  <form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="fill">
+      <mat-label>Naslov</mat-label>
+      <input matInput formControlName="title" />
+      <mat-error
+        *ngIf="postForm.get('title')?.invalid && postForm.get('title')?.touched"
+        >Naslov je obavezno polje</mat-error
+      >
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Opis</mat-label>
+      <textarea matInput formControlName="body" rows="4"></textarea>
+      <mat-error
+        *ngIf="postForm.get('body')?.invalid && postForm.get('body')?.touched"
+        >Opis je obavezno polje</mat-error
+      >
+    </mat-form-field>
+    <mat-label>Slike</mat-label>
+    <br />
+    <input
+      type="file"
+      accept="image/*"
+      (change)="onFileChange($event)"
+      multiple
+    />
+    <mat-error *ngIf="postForm.controls['images'].hasError('maxImageAmount')">
+      Možete maksimalno 10 slika da izaberete
+    </mat-error>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Otkazi</button>
+  <button mat-button color="primary" (click)="onSubmit()" type="submit">
+    Objavi
+  </button>
+</div>
