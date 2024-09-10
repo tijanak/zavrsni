@@ -11,10 +11,14 @@ import {
   loadPostsFailure,
   loadPostsSuccess,
   loadPostSuccess,
+  uploadPost,
+  uploadPostFailure,
+  uploadPostSuccess,
 } from './post.actions';
 import { PostService } from '../../services/post.service';
-import { loadImagesForPost } from '../images/images.actions';
+import { loadImagesForPost, uploadImages } from '../images/images.actions';
 import { DognnService } from '../../services/nn.service';
+import { CreatePostDto } from '@dog-finder/models';
 
 @Injectable()
 export class PostEffects {
@@ -45,6 +49,22 @@ export class PostEffects {
           catchError((error) => of(loadPostFailure({ error })))
         )
       )
+    )
+  );
+  postUpload$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(uploadPost),
+      switchMap(({ postDto, images }) => {
+        return this.postService.create(postDto).pipe(
+          mergeMap((post) => [
+            uploadPostSuccess({ post }),
+            uploadImages({ images, postId: post.id }),
+          ]),
+          catchError((error) => {
+            return of(uploadPostFailure({ error }));
+          })
+        );
+      })
     )
   );
   postLoadMatches$ = createEffect(() =>

@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { PostFormComponent } from '../post-form/post-form.component';
 import { MatButtonModule } from '@angular/material/button';
+import { AppState } from '../store/app.reducer';
+import { Store } from '@ngrx/store';
+import { uploadPost } from '../store/post/post.actions';
 
 @Component({
   selector: 'app-lost-post-btn',
@@ -12,7 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './lost-post-btn.component.css',
 })
 export class LostPostBtnComponent {
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog, private store: Store<AppState>) {}
 
   openDialog(): void {
     const dialogRef = this.dialog.open(PostFormComponent, {
@@ -22,7 +25,16 @@ export class LostPostBtnComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('Post submitted:', result);
+        this.store.dispatch(
+          uploadPost({
+            postDto: {
+              title: result.title,
+              body: result.body,
+              looking_for: true,
+            },
+            images: { ...result.images, length: result.images.length },
+          })
+        );
       }
     });
   }

@@ -66,7 +66,7 @@ export class ImagesController {
 
     try {
       const images = await Promise.all(
-        await files.map(async (file) => {
+        files.map(async (file) => {
           let vector = [];
           try {
             vector = await this.doggnnService.encode(
@@ -75,7 +75,7 @@ export class ImagesController {
           } catch (e) {
             Logger.log(e);
           }
-          this.imageService.createForPost(
+          return this.imageService.createForPost(
             { fileName: file.filename, vector },
             id
           );

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@dog-finder/environment';
 import { Observable } from 'rxjs';
-import { CreatePostDto } from '@dog-finder/models';
+import { CreatePostDto, IPost } from '@dog-finder/models';
 import { UpdatePostDto } from '@dog-finder/models';
 
 @Injectable({
@@ -13,23 +13,23 @@ export class PostService {
 
   constructor(private http: HttpClient) {}
 
-  findAll(): Observable<any> {
-    return this.http.get(this.baseUrl);
+  findAll() {
+    return this.http.get<IPost[]>(this.baseUrl);
   }
 
-  findOne(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${id}`);
+  findOne(id: number) {
+    return this.http.get<IPost>(`${this.baseUrl}/${id}`);
   }
 
-  create(createPostDto: CreatePostDto): Observable<any> {
-    return this.http.post(this.baseUrl, createPostDto);
+  create(createPostDto: CreatePostDto) {
+    return this.http.post<IPost>(this.baseUrl, createPostDto);
   }
 
-  update(id: number, updatePostDto: UpdatePostDto): Observable<any> {
+  update(id: number, updatePostDto: UpdatePostDto) {
     return this.http.patch(`${this.baseUrl}/${id}`, updatePostDto);
   }
 
-  remove(id: number): Observable<any> {
+  remove(id: number) {
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
 }

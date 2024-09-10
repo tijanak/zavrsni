@@ -35,5 +35,11 @@ export const postReducer = createReducer(
   }),
   on(actions.loadPostMatchesFailure, (state, { error }) => {
     return { ...state, error };
+  }),
+  on(actions.uploadPostFailure, (state, { error }) => {
+    return { ...state, error };
+  }),
+  on(actions.uploadPostSuccess, (state, { post }) => {
+    return postAdapter.addOne(post, state);
   })
 );

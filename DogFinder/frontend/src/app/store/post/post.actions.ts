@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { HttpErrorResponse } from '@angular/common/http';
-import { IPost } from '@dog-finder/models';
+import { CreatePostDto, IPost } from '@dog-finder/models';
 
 export const loadPosts = createAction('[Posts] Load Posts');
 
@@ -39,5 +39,19 @@ export const loadPostMatchesSuccess = createAction(
 
 export const loadPostMatchesFailure = createAction(
   '[Posts] Load Post Matches Failure',
+  props<{ error: HttpErrorResponse }>()
+);
+export const uploadPost = createAction(
+  '[Posts] Upload Post',
+  props<{ postDto: CreatePostDto; images: FileList }>()
+);
+
+export const uploadPostSuccess = createAction(
+  '[Posts] Upload Post Success',
+  props<{ post: IPost }>()
+);
+
+export const uploadPostFailure = createAction(
+  '[Posts] Upload Post Failure',
   props<{ error: HttpErrorResponse }>()
 );
