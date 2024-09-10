@@ -1,0 +1,81 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 20px;
+}
+
+mat-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  margin-bottom: 16px;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+mat-form-field mat-label {
+  color: #333;
+}
+
+mat-form-field input {
+  font-size: 16px;
+}
+
+mat-form-field mat-error {
+  font-size: 12px;
+  color: #d32f2f;
+}
+
+button[mat-raised-button] {
+  background-color: #007bff;
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 100%;
+  transition: background-color 0.3s;
+}
+
+button[mat-raised-button]:hover {
+  background-color: #0056b3;
+}
+
+button[mat-raised-button]:disabled {
+  background-color: #cccccc;
+}
+
+button[mat-icon-button] {
+  margin-left: 8px;
+}
+
+mat-icon {
+  color: #007bff;
+}
+
+a {
+  display: block;
+  text-align: center;
+  color: #007bff;
+  text-decoration: none;
+  margin-top: 16px;
+}
+
+a:hover {
+  text-decoration: underline;
+}

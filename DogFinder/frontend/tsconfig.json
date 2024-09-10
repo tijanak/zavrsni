@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es2022",
+    "target": "es2015",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "strictPropertyInitialization": false
   },
   "files": [],
   "include": [],

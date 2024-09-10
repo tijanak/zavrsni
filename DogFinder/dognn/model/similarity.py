@@ -1,6 +1,6 @@
 import torch
 
-
+import json
 def cosine_search(database_vectors, query_vector):
     
     if not isinstance(database_vectors, (list, torch.Tensor)):
@@ -26,3 +26,28 @@ def cosine_search(database_vectors, query_vector):
     similarities = torch.sum(database_vectors_normalized * query_vector_normalized, dim=1)
 
     return similarities.cpu().numpy()
+
+def find_similarities(database_vectors, query_vector):
+    response=[]
+    if(len(database_vectors)!=0):
+
+
+        vectors = [entry['vector'] for entry in database_vectors]
+        similarities = cosine_search(vectors, query_vector)
+        id_max_similarity = {}
+        for index, entry in enumerate(database_vectors):
+            vector_id = entry['id']
+            similarity = float(similarities[index])
+            if (not(vector_id in id_max_similarity) or (similarity > id_max_similarity[vector_id] ))and similarity>0.5:
+                id_max_similarity[vector_id] = similarity
+        
+        filtered_data = [{'id': vector_id, 'similarity': score} 
+                         for vector_id, score in id_max_similarity.items() ]
+        
+        sorted_data = sorted(filtered_data, key=lambda x: x['similarity'], reverse=True)
+        
+        top_3_data = sorted_data[:3]
+
+        response = top_3_data
+
+    return response

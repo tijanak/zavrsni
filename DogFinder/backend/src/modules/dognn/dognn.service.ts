@@ -22,20 +22,26 @@ export class DognnService {
     }
     return Buffer.concat(chunks);
   };
+  async getMatchingPosts(post_id) {
+    try {
+      const response = await this.axios.get(
+        `${environment.MODEL_URL}matches/${post_id}`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error calling API: ${error.message}`);
+    }
+  }
   async encode(filePath: string) {
     const formData = new FormData();
 
-    // Create a readable stream from the file path
     const fileStream = fs.createReadStream(filePath);
-
-    // Get the file name and mimetype (you might need to infer or provide this)
     const fileName = path.basename(filePath);
     const fileMimeType =
       mime.lookup(path.extname(filePath)) || 'application/octet-stream';
     const blob = new Blob([await this.streamToBuffer(fileStream as Readable)], {
       type: fileMimeType,
     });
-    // Append the file stream to FormData
     formData.append('file', blob, filePath);
     try {
       Logger.log(`${environment.MODEL_URL}predict/`);
@@ -49,7 +55,6 @@ export class DognnService {
           },
         }
       );
-
       return response.data;
     } catch (error) {
       throw new Error(`Error calling API: ${error.message}`);

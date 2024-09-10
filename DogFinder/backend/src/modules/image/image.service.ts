@@ -14,6 +14,7 @@ export class ImageService {
   createForPost(imageDto: CreateImageDto, postId: number) {
     const image = this.imageRepo.create({
       fileName: imageDto.fileName,
+      vector: imageDto.vector,
       post: { id: postId },
     });
     return this.imageRepo.save(image, {});

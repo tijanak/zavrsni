@@ -12,6 +12,7 @@ import { PostModule } from '../post/post.module';
 import { UserModule } from '../user/user.module';
 import { AuthModule } from '../auth/auth.module';
 import { ImageModule } from '../image/image.module';
+import { DogNNModule } from '../dognn/dognn.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ImageModule } from '../image/image.module';
     UserModule,
     AuthModule,
     ImageModule,
+    DogNNModule,
   ],
   controllers: [AppController],
   providers: [AppService],

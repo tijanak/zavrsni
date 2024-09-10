@@ -1,0 +1,27 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="register-form">
+  <mat-card>
+    <mat-form-field appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" />
+      <mat-error *ngIf="form.controls['email'].hasError('required')">
+        Email je <strong>obavezan</strong>
+      </mat-error>
+      <mat-error *ngIf="form.controls['email'].hasError('email')">
+        Unesite <strong>validan email</strong>
+      </mat-error> </mat-form-field
+    ><br />
+    <mat-form-field appearance="fill">
+      <mat-label>Lozinka</mat-label>
+      <input matInput type="password" formControlName="password" />
+      <mat-error *ngIf="form.controls['password'].hasError('required')">
+        Lozinka je <strong>Obavezna</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <br />
+    <button mat-raised-button type="submit" [disabled]="form.invalid">
+      Login
+    </button>
+  </mat-card>
+  <a [routerLink]="['/register']">Registracija</a>
+</form>

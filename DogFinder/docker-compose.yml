@@ -15,6 +15,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - 5000:5000
+    env_file:
+      - .env.local
     shm_size: '64gb'
     deploy:
       resources:
@@ -28,6 +30,8 @@ services:
         - action: sync
           path: ./dognn/
           target: /app/
+    depends_on:
+      - db
     volumes:
       - dogfinder_dognn_data:/app/
   backend:

@@ -10,7 +10,7 @@ export class Image implements IImage {
   @Column()
   @IsString()
   fileName: string;
-  @Column('jsonb', { nullable: true })
+  @Column('simple-json')
   vector: number[];
   @ManyToOne(() => Post, (post) => post.images)
   post: Post;
