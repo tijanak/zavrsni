@@ -47,11 +47,11 @@ def search():
 
     
     return response
+#TODO - obrisi
 @app.route('/db')
 def db():
-    response = json.dumps(database)
-    return response
-@app.route('/predict/',methods=['POST'])
+    return 'hello'
+@app.route('/predict/', methods=['POST'])
 def predict():
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
@@ -60,11 +60,32 @@ def predict():
     
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
-    if file:
+    
+    try:
+        app.logger.info(f"Received file: {file.filename}, Size: {len(file.read())} bytes")
+        
+        file.seek(0)  # Reset file pointer to the beginning
         image_bytes = file.read()
+        
+        # Create BytesIO object
+        image_stream = io.BytesIO(image_bytes)
+        
+        app.logger.info('predict')
+        # Try to open the image to validate it's a valid image file
+        from PIL import Image
+        image = Image.open(image_stream)
+        image.verify()  # Validate the image file
+        
+        # Reset stream for further processing
+        image_stream.seek(0)
+        
         tensor = arcface.predict(imageLoader.load_img(io.BytesIO(image_bytes)))
+        
         data = tensor.tolist()
         response = json.dumps(data)
         return response
+    except Exception as e:
+        app.logger.error(e)
+        return jsonify({"error": str(e)}), 500
 if __name__ == '__main__':
     app.run(debug=True,port=int(os.environ.get('NX_NN_PORT', 5000)))

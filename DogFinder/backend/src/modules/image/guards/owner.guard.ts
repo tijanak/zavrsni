@@ -19,9 +19,7 @@ export class ImageOwnerGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    Logger.log(user);
     const imageId = +request.params.id;
-    Logger.log(imageId);
     if (!user || !user.id) {
       throw new ForbiddenException('Nije autorizovano.');
     }
@@ -32,8 +30,6 @@ export class ImageOwnerGuard implements CanActivate {
       throw new ForbiddenException('Slika nije pronadjena.');
     }
 
-    Logger.log(image.post);
-    Logger.log(image.post?.creator);
     const ownerId = image.post?.creator?.id;
 
     if (user.id !== ownerId) {

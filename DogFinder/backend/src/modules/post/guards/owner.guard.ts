@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   ForbiddenException,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PostService } from '../post.service';
@@ -23,10 +24,10 @@ export class OwnerGuard implements CanActivate {
       throw new BadRequestException();
     }
     const post = await this.postService.findOne(postId, ['creator']);
+
     if (!post) {
       throw new ForbiddenException('Objava ne postoji');
     }
-
     if (post.creator.id !== user.id) {
       throw new ForbiddenException('Not authorized to access this post');
     }

@@ -16,7 +16,7 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import * as fs from 'fs';
-import { diskStorage, Multer } from 'multer';
+import { diskStorage } from 'multer';
 import * as path from 'path';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ImageOwnerGuard } from './guards/owner.guard';
@@ -57,7 +57,7 @@ export class ImagesController {
     })
   )
   async upload(
-    @UploadedFiles() files: Array<Multer.File>,
+    @UploadedFiles() files: Array<Express.Multer.File>,
     @Param('id', ParseIntPipe) id: number
   ) {
     if (!files || files.length === 0) {
@@ -67,7 +67,14 @@ export class ImagesController {
     try {
       const images = await Promise.all(
         await files.map(async (file) => {
-          let vector = await this.doggnnService.encode(file);
+          let vector = [];
+          try {
+            vector = await this.doggnnService.encode(
+              path.join(imagesPath, file.filename)
+            );
+          } catch (e) {
+            Logger.log(e);
+          }
           this.imageService.createForPost(
             { fileName: file.filename, vector },
             id
@@ -77,6 +84,7 @@ export class ImagesController {
 
       return images;
     } catch (error) {
+      Logger.log(error);
       throw new BadRequestException('Greska u procesuiranju fajlova.');
     }
   }
