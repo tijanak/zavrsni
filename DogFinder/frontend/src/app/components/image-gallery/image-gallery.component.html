@@ -26,11 +26,13 @@
       [routerLink]
       caption="Previous"
       direction="prev"
+      (click)="onButtonClick($event)"
     ></c-carousel-control>
     <c-carousel-control
       [routerLink]
       caption="Next"
       direction="next"
+      (click)="onButtonClick($event)"
     ></c-carousel-control>
   </c-carousel>
 </div>

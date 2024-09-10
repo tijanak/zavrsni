@@ -28,8 +28,8 @@ export class ViewPostComponent implements OnDestroy, OnInit {
     this.postSubscription = this.store
       .select(selectSelectedPost)
       .subscribe((post) => {
-        this.post = post;
         if (post) {
+          this.post = JSON.parse(JSON.stringify(post));
           this.matchesSubscription = this.store
             .select(selectPostMatches)
             .subscribe((matches) => {

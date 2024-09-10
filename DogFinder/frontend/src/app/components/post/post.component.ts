@@ -1,4 +1,11 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { selectImagesForPost } from '../../store/images/images.selectors';
@@ -14,7 +21,7 @@ import { ImageGalleryComponent } from '../image-gallery/image-gallery.component'
   templateUrl: './post.component.html',
   styleUrl: './post.component.css',
 })
-export class PostComponent implements OnDestroy, OnInit {
+export class PostComponent implements OnDestroy, OnInit, OnChanges {
   @Input() post: IPost;
   images: IImage[];
   private subscription: Subscription;
@@ -25,7 +32,13 @@ export class PostComponent implements OnDestroy, OnInit {
       .select(selectImagesForPost(this.post.id))
       .subscribe((images) => (this.images = images));
   }
-
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['post']) {
+      this.subscription = this.store
+        .select(selectImagesForPost(this.post.id))
+        .subscribe((images) => (this.images = images));
+    }
+  }
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }

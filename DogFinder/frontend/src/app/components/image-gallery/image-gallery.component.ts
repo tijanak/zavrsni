@@ -48,4 +48,8 @@ export class ImageGalleryComponent implements OnChanges {
       this.isVisible = true;
     }
   }
+  onButtonClick(event: MouseEvent): void {
+    event.stopPropagation();
+    console.log('Button clicked');
+  }
 }
