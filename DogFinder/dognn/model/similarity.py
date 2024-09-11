@@ -39,7 +39,7 @@ def find_similarities(database_vectors, query_vector,id_max_similarity):
         for index, entry in enumerate(database_vectors):
             vector_id = entry['id']
             similarity = float(similarities[index])
-            if (not(vector_id in id_max_similarity) or (similarity > id_max_similarity[vector_id] ))and similarity>0.5:
+            if (not(vector_id in id_max_similarity) or (similarity > id_max_similarity[vector_id] ))and similarity>0.55:
                 id_max_similarity[vector_id] = similarity
         
         

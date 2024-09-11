@@ -1,11 +1,10 @@
 import cv2
 import numpy as np
 from rembg import remove
-dog_cascade = cv2.CascadeClassifier('./preprocessing/haarcascade_frontal_dog_face.xml')
 
 IMG_SIZE = 224
-CASCADE_SCALE = 1.05
-MIN_NEIGH = 1
+CASCADE_SCALE = 1.1
+MIN_NEIGH = 5
 def remove_background(image):
     output_image = remove(image, alpha_matting=False)
     
@@ -20,11 +19,43 @@ def remove_background(image):
         return rgb_image
     else:
         return output_image
+def is_gpu_available():
+    return cv2.cuda.getCudaEnabledDeviceCount() > 0
 
+def detect_faces(image,cascadexml):
+    
+    if is_gpu_available():
+        cascade_gpu = cv2.cuda_CascadeClassifier.create(cascadexml)
+        image_gpu = cv2.cuda_GpuMat()
+        image_gpu.upload(image)
+        objects = cascade_gpu.detectMultiScale(image_gpu, scaleFactor=CASCADE_SCALE, minNeighbors=MIN_NEIGH)
+        faces = objects.download()
+    else:
+        cascade_cpu = cv2.CascadeClassifier(cascadexml)
+        faces = cascade_cpu.detectMultiScale(image, scaleFactor=CASCADE_SCALE, minNeighbors=MIN_NEIGH)
+    
+    return faces
+def downscale_image(img, max_dimension: int = IMG_SIZE*2):
+    height, width = img.shape[:2]
+    if(width>max_dimension or height>max_dimension):
+        if width > height:
+            scale = max_dimension / width
+        else:
+            scale = max_dimension / height
+
+        new_width = int(width * scale)
+        new_height = int(height * scale)
+        resized_img = cv2.resize(img, (new_width, new_height), interpolation=cv2.INTER_AREA)
+
+
+        return resized_img
+    else:
+        return img
 def process_image(image):
+    image=downscale_image(image)
     image = remove_background(image)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    dogs = dog_cascade.detectMultiScale(gray, scaleFactor=CASCADE_SCALE, minNeighbors=MIN_NEIGH)
+    dogs = detect_faces(gray,'./preprocessing/cascade.xml')
     areas = []
 
     for index, (x, y, w, h) in enumerate(dogs):

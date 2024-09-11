@@ -41,7 +41,8 @@ def get_similarities(post_id):
             result = top_3_data
         ids = [item['id'] for item in result] 
         posts=get_posts_with_ids(ids)
-        result = [post.to_dict() for post in posts]
+        sorted_posts = [post for id in ids for post in posts if post.id == id]
+        result = [post.to_dict() for post in sorted_posts]
         return jsonify(result)
     except Exception as e:
         app.logger.error(e)
