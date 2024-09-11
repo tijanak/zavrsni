@@ -15,6 +15,7 @@ import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { maxImageAmount } from '../validators/max-image-amount-validator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-post-form',
@@ -26,21 +27,21 @@ import { maxImageAmount } from '../validators/max-image-amount-validator';
     MatDialogModule,
     MatInputModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './post-form.component.html',
   styleUrl: './post-form.component.css',
 })
 export class PostFormComponent {
   postForm: FormGroup;
-
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<PostFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { looking_for: boolean }
   ) {
     this.postForm = this.fb.group({
-      title: ['', Validators.required],
-      body: ['', Validators.required],
+      title: [' ', Validators.required],
+      body: [' ', Validators.required],
       looking_for: [this.data.looking_for],
       images: [FileList, maxImageAmount(10)],
     });

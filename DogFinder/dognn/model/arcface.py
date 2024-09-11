@@ -12,6 +12,7 @@ class ArcFace(torch.nn.Module):
         self.arcface.eval()
 
     def predict(self, img):
+        torch.cuda.empty_cache()        
         with torch.no_grad():
             img = img.to(device)
             return F.normalize(self.arcface(img.unsqueeze(0))).flatten()

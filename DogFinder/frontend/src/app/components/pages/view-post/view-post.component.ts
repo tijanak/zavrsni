@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { AppState } from 'frontend/src/app/store/app.reducer';
-import { Subscription } from 'rxjs';
+import { skip, Subscription } from 'rxjs';
 import {
   selectPostMatches,
   selectSelectedPost,
@@ -32,6 +32,7 @@ export class ViewPostComponent implements OnDestroy, OnInit {
           this.post = JSON.parse(JSON.stringify(post));
           this.matchesSubscription = this.store
             .select(selectPostMatches)
+            .pipe(skip(1))
             .subscribe((matches) => {
               this.matches = matches;
             });

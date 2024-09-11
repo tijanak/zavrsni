@@ -6,9 +6,11 @@ def get_post_images(post):
     result = []
     for image in post.images:
         vector = json.loads(image.vector) if isinstance(image.vector, str) else image.vector
-        result.append({
+        for v in vector:
+
+            result.append({
                     "id": post.id,
-                    "vector": vector
+                    "vector": v
                 })
 
     return result

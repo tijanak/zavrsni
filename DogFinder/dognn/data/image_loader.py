@@ -10,4 +10,4 @@ class ImageLoader:
         ])
 
     def load_img(self, img):
-        return self.transform(Image.open(img).convert('RGB'))
+        return self.transform(img)
