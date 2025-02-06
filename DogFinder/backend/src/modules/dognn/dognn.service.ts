@@ -32,7 +32,7 @@ export class DognnService {
       throw new Error(`Error calling API: ${error.message}`);
     }
   }
-  async encode(filePath: string) {
+  async encode(filePath: string,image_id:number) {
     const formData = new FormData();
 
     const fileStream = fs.createReadStream(filePath);
@@ -44,9 +44,9 @@ export class DognnService {
     });
     formData.append('file', blob, filePath);
     try {
-      Logger.log(`${environment.MODEL_URL}predict/`);
+      Logger.log(`${environment.MODEL_URL}/predict/${image_id}`);
       const response = await this.axios.post(
-        `${environment.MODEL_URL}predict`,
+        `${environment.MODEL_URL}predict/${image_id}`,
         formData,
         {
           headers: {

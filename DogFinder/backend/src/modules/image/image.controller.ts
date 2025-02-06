@@ -67,18 +67,19 @@ export class ImagesController {
     try {
       const images = await Promise.all(
         files.map(async (file) => {
+          const image = await this.imageService.createForPost(
+            { fileName: file.filename },
+            id
+          );
           let vector = [];
           try {
-            vector = await this.doggnnService.encode(
-              path.join(imagesPath, file.filename)
-            );
+            Logger.log(image.id)
+            vector = await this.doggnnService.encode(path.join(imagesPath, file.filename),image.id);
+            Logger.log(vector);
           } catch (e) {
             Logger.log(e);
           }
-          return this.imageService.createForPost(
-            { fileName: file.filename, vector },
-            id
-          );
+          return image;
         })
       );
 

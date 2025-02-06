@@ -1,5 +1,6 @@
 
-from db.models import Post
+from db.models import Post,DogFace
+from db.init import db
 import json
 from app import app
 def get_post_images(post):
@@ -33,8 +34,8 @@ def get_opposite_posts(post):
 def get_posts_with_ids(ids):
     try:
         posts = Post.query.filter(Post.id.in_(ids)).all()
-        
-        
+
+
         return posts
     except Exception as e:
         raise e
@@ -44,7 +45,7 @@ def get_images_from_posts(posts):
         for post in posts:
             for image in get_post_images(post):
                 result.append(image)
-        
+
         return result
 
     except Exception as e:
@@ -62,8 +63,77 @@ def get_opposite_post_images(post):
         for opposite_post in opposite_posts:
             for image in get_post_images(opposite_post):
                 result.append(image)
-        
+
         return result
 
     except Exception as e:
+        raise e
+# cur.execute(
+#     """
+#     SELECT DISTINCT ON (image_id)
+#         face_id,
+#         image_id,
+#         (embedding <=> %s + embedding <=> %s) / 2 AS combined_similarity
+#     FROM dog_faces
+#     ORDER BY combined_similarity DESC, image_id
+#     LIMIT 30
+#     """,
+#     (query_embedding_A, query_embedding_B)
+# )
+def find_recommended(query_embeddings, looking_for_value=True):
+    # Generate the similarity comparison expressions
+    embedding_comparisons = ["(embedding <=> CAST( :embedding_{} AS Vector(512)))".format(i) for i in range(len(query_embeddings))]
+
+    # Combine the similarity comparisons into a sum
+    similarity_sum = " + ".join(embedding_comparisons)
+
+    # Define the query
+    query = f"""
+    SELECT * FROM (
+    SELECT DISTINCT ON ("postId")
+        "postId",
+        ({similarity_sum}) / {len(query_embeddings)} AS similarity
+    FROM dog_faces
+    JOIN image ON dog_faces.image_id = image.id
+    JOIN post ON image."postId" = post.id
+    WHERE post.looking_for = :looking_for_value
+    GROUP BY "postId", dog_faces.embedding
+    ORDER BY "postId", similarity DESC
+    LIMIT 3 ) A WHERE A.similarity > 0.8
+    """
+
+    # Prepare the parameters
+    query_params = {'looking_for_value': looking_for_value}
+    for i, embedding_text in enumerate(query_embeddings):
+        # Parse the text (which is a JSON array string) into a list of floats
+        embedding_list = json.loads(embedding_text)
+        query_params[f"embedding_{i}"] = embedding_list  # Pass the list directly
+
+    # Execute the query
+    results = db.session.execute(text(query), query_params).fetchall()
+
+    # Return the post IDs
+    return [row[0] for row in results]
+from sqlalchemy import text
+def get_embeddings_for_post(post_id):
+    query = """
+    SELECT dog_faces.embedding
+    FROM dog_faces
+    JOIN image ON dog_faces.image_id = image.id
+    WHERE image."postId" = :post_id
+    """
+
+    result = db.session.execute(text(query), {'post_id': post_id}).fetchall()
+
+    embeddings = [row[0] for row in result]
+
+    return embeddings
+def insert_dog_face(image_id, embedding):
+    try:
+        dog_face = DogFace(image_id=image_id, embedding=embedding)
+        db.session.add(dog_face)
+        db.session.commit()
+        return dog_face
+    except Exception as e:
+        db.session.rollback()
         raise e
