@@ -14,17 +14,23 @@ from preprocessing.preprocessing import process_image
 from PIL import Image
 import numpy as np
 import cv2
-@app.route('/recommend/<int:post_id>', methods=['GET'])
+@app.route('/matches/<int:post_id>', methods=['GET'])
 def get_recommendations(post_id):
   try:
     post=get_post(post_id)
     query_embeddings=get_embeddings_for_post(post_id)
-    get_similarities=find_recommended(query_embeddings,not post.looking_for)
-    return json.dumps(get_similarities)
+    result=find_recommended(query_embeddings,not post.looking_for)
+
+    ids = [item['id'] for item in result]
+    posts=get_posts_with_ids(ids)
+    sorted_posts = [post for id in ids for post in posts if post.id == id]
+    result = [post.to_dict() for post in sorted_posts]
+    return jsonify(result)
+
   except Exception as e:
         app.logger.error(e)
         return jsonify({"error": str(e)}), 500
-@app.route('/matches/<int:post_id>', methods=['GET'])
+@app.route('/recommend/<int:post_id>', methods=['GET'])
 def get_similarities(post_id):
     try:
         post=get_post(post_id)

@@ -14,6 +14,7 @@ import {
 import { PostsComponent } from '../../posts/posts.component';
 import { LostPostBtnComponent } from '../../../lost-post-btn/lost-post-btn.component';
 import { FoundPostBtnComponent } from '../../../found-post-btn/found-post-btn.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
@@ -25,7 +26,7 @@ import { FoundPostBtnComponent } from '../../../found-post-btn/found-post-btn.co
     LogoutComponent,
     PostsComponent,
     LostPostBtnComponent,
-    FoundPostBtnComponent,
+    FoundPostBtnComponent,FormsModule
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
@@ -34,7 +35,7 @@ export class HomeComponent {
   private subscriptions: Subscription[] = [];
   foundPosts: IPost[] = [];
   lostPosts: IPost[] = [];
-
+  selectedType = 'lost';
   constructor(private store: Store<AppState>) {
     this.subscriptions.push(
       this.store

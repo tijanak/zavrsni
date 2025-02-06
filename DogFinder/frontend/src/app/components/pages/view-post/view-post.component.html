@@ -1,10 +1,12 @@
-<div *ngIf="post; else postNotFound">
+<div *ngIf="post; else postNotFound" >
   <div class="container">
-    <div class="left">
+    <div class="left post-container">
       <app-post [post]="post"></app-post>
     </div>
-    <div class="right">
-      <h2>Pronadjene slicne objave</h2>
+    <div class="right post-container">
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <h2>Slicni psi</h2>
+      </div>
       <app-posts [posts]="matches"></app-posts>
     </div>
   </div>

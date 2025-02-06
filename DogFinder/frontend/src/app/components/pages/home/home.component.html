@@ -1,12 +1,18 @@
-<div style="display: flex; flex-direction: row; width: 100%">
-  <div style="flex: 1 1 auto">
+<div class="home-container">
+  <div class="post-type-selector">
+    <select [(ngModel)]="selectedType" class="post-type-dropdown">
+      <option value="lost">Traze se</option>
+      <option value="found">Pronadjeni</option>
+    </select>
+  </div>
+  <div *ngIf="selectedType === 'lost'">
     <app-lost-post-btn />
-    <h2>Traze se</h2>
+    <h2 class="post-type-header">Traze se</h2>
     <app-posts [posts]="lostPosts"></app-posts>
   </div>
-  <div style="flex: 1 1 auto">
+  <div *ngIf="selectedType === 'found'">
     <app-found-post-btn />
-    <h2>Pronadjeni</h2>
+    <h2 class="post-type-header">Pronadjeni</h2>
     <app-posts [posts]="foundPosts"></app-posts>
   </div>
 </div>

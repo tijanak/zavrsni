@@ -68,31 +68,16 @@ def get_opposite_post_images(post):
 
     except Exception as e:
         raise e
-# cur.execute(
-#     """
-#     SELECT DISTINCT ON (image_id)
-#         face_id,
-#         image_id,
-#         (embedding <=> %s + embedding <=> %s) / 2 AS combined_similarity
-#     FROM dog_faces
-#     ORDER BY combined_similarity DESC, image_id
-#     LIMIT 30
-#     """,
-#     (query_embedding_A, query_embedding_B)
-# )
-def find_recommended(query_embeddings, looking_for_value=True):
-    # Generate the similarity comparison expressions
+def cosine_sim_query(query_embeddings):
     embedding_comparisons = ["(embedding <=> CAST( :embedding_{} AS Vector(512)))".format(i) for i in range(len(query_embeddings))]
 
-    # Combine the similarity comparisons into a sum
-    similarity_sum = " + ".join(embedding_comparisons)
+    similarity_best = "GREATEST(" + ", ".join(embedding_comparisons) + ")"
 
-    # Define the query
     query = f"""
     SELECT * FROM (
     SELECT DISTINCT ON ("postId")
         "postId",
-        ({similarity_sum}) / {len(query_embeddings)} AS similarity
+        {similarity_best} AS similarity
     FROM dog_faces
     JOIN image ON dog_faces.image_id = image.id
     JOIN post ON image."postId" = post.id
@@ -101,19 +86,37 @@ def find_recommended(query_embeddings, looking_for_value=True):
     ORDER BY "postId", similarity DESC
     LIMIT 3 ) A WHERE A.similarity > 0.8
     """
+    return query
+def euclidean_query(query_embeddings):
+    embedding_comparisons = ["(embedding <-> CAST( :embedding_{} AS Vector(512)))".format(i) for i in range(len(query_embeddings))]
 
-    # Prepare the parameters
+    similarity_best = "LEAST(" + ", ".join(embedding_comparisons) + ")"
+
+    query = f"""
+    SELECT * FROM (
+    SELECT DISTINCT ON ("postId")
+        "postId",
+        {similarity_best} AS similarity
+    FROM dog_faces
+    JOIN image ON dog_faces.image_id = image.id
+    JOIN post ON image."postId" = post.id
+    WHERE post.looking_for = :looking_for_value
+    GROUP BY "postId", dog_faces.embedding
+    ORDER BY "postId", similarity ASC
+    LIMIT 3 ) A WHERE A.similarity < 1
+    """
+    return query
+
+def find_recommended(query_embeddings, looking_for_value=True):
+    query = euclidean_query(query_embeddings)
     query_params = {'looking_for_value': looking_for_value}
     for i, embedding_text in enumerate(query_embeddings):
-        # Parse the text (which is a JSON array string) into a list of floats
         embedding_list = json.loads(embedding_text)
-        query_params[f"embedding_{i}"] = embedding_list  # Pass the list directly
+        query_params[f"embedding_{i}"] = embedding_list
 
-    # Execute the query
     results = db.session.execute(text(query), query_params).fetchall()
 
-    # Return the post IDs
-    return [row[0] for row in results]
+    return [{"id": row[0],"sim":row[1]} for row in results]
 from sqlalchemy import text
 def get_embeddings_for_post(post_id):
     query = """
