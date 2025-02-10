@@ -3,6 +3,9 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { from, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
 import {
+  deletePost,
+  deletePostFailure,
+  deletePostSuccess,
   loadPost,
   loadPostFailure,
   loadPostMatchesFailure,
@@ -100,6 +103,17 @@ export class PostEffects {
       switchMap(({ matches }) =>
         from(matches).pipe(
           mergeMap((post) => [loadImagesForPost({ postId: post.id })])
+        )
+      )
+    )
+  );
+  postDelete$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deletePost),
+      switchMap(({ id }) =>
+        this.postService.remove(id).pipe(
+          map(() => deletePostSuccess({ id })),
+          catchError((error) => of(deletePostFailure({ error })))
         )
       )
     )

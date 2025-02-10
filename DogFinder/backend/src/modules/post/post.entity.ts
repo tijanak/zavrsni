@@ -5,24 +5,23 @@ import {
   Column,
   Entity,
   ManyToOne,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn,CreateDateColumn
 } from 'typeorm';
 import { Image } from '../image/image.entity';
 @Entity()
 export class Post implements IPost {
   @PrimaryGeneratedColumn()
   id: number;
+  @CreateDateColumn({ type: 'timestamptz' })
+  time_created: Date;
 
   @Column()
-  title: string;
-
-  @Column()
-  body: string;
+  description: string;
 
   @Column()
   looking_for: boolean;
 
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   creator: User;
 
   @OneToMany(() => Image, (image) => image.post)

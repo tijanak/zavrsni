@@ -55,3 +55,17 @@ export const uploadPostFailure = createAction(
   '[Posts] Upload Post Failure',
   props<{ error: HttpErrorResponse }>()
 );
+export const deletePost = createAction(
+  '[Posts] Delete Post',
+  props<{ id: number }>()
+);
+
+export const deletePostSuccess = createAction(
+  '[Posts] Delete Post Success',
+  props<{ id: number }>()
+);
+
+export const deletePostFailure = createAction(
+  '[Posts] Delete Post Failure',
+  props<{ error: HttpErrorResponse }>()
+);

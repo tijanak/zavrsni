@@ -1,11 +1,12 @@
 from flask import request, jsonify
 from model.arcface import ArcFace
+from model.model import Model
 from data.image_loader import ImageLoader
 import json
 from model.similarity import cosine_search
 import io
 from app import app
-arcface = ArcFace()
+model = Model()
 imageLoader = ImageLoader()
 from app import app
 from flask import jsonify
@@ -109,7 +110,7 @@ def predict(image_id):
         dogs=process_image(image_np)
         tensors=[]
         for dog in dogs:
-            tensor = arcface.predict(imageLoader.load_img(dog))
+            tensor = model.predict(imageLoader.load_img(dog))
             insert_dog_face(image_id,tensor)
             tensors.append(tensor.tolist())
         response = json.dumps(tensors)

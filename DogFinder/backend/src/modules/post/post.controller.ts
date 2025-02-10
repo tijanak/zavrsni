@@ -27,7 +27,7 @@ export class PostController {
 
   @Get(':id')
   async findOne(@Param('id') id: number) {
-    return this.postService.findOne(id);
+    return this.postService.findOne(id,['creator']);
   }
 
   @Post()

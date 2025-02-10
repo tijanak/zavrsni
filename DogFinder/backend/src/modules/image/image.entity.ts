@@ -12,6 +12,6 @@ export class Image implements IImage {
   fileName: string;
  /* @Column('simple-json')
   vector: number[];*/
-  @ManyToOne(() => Post, (post) => post.images)
+  @ManyToOne(() => Post, (post) => post.images, { onDelete: 'CASCADE' })
   post: Post;
 }

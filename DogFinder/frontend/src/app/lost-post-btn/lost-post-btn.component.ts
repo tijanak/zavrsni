@@ -28,8 +28,7 @@ export class LostPostBtnComponent {
         this.store.dispatch(
           uploadPost({
             postDto: {
-              title: result.title,
-              body: result.body,
+              description: result.description,
               looking_for: true,
             },
             images: { ...result.images, length: result.images.length },

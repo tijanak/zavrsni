@@ -41,5 +41,12 @@ export const postReducer = createReducer(
   }),
   on(actions.uploadPostSuccess, (state, { post }) => {
     return postAdapter.addOne(post, state);
+  }),
+  on(actions.deletePostSuccess, (state, { id }) => {
+    return postAdapter.removeOne(id, state);
+  }),
+  on(actions.deletePostFailure, (state, { error }) => {
+    return { ...state, error };
   })
+
 );

@@ -14,9 +14,9 @@ from pgvector.sqlalchemy import Vector
 class Post(db.Model):
     __tablename__ = 'post'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String, nullable=False)
-    body = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text, nullable=False)
     looking_for = db.Column(db.Boolean, nullable=False)
+
     #creator_id = db.Column('creatorId',db.Integer, db.ForeignKey('user.id'))
 
     #creator = db.relationship('User', back_populates='posts')
@@ -30,21 +30,20 @@ class Post(db.Model):
             'looking_for': self.looking_for
         }
 
+
+
+class DogFace(db.Model):
+    __tablename__ = 'dog_faces'
+    face_id = db.Column(db.Integer, primary_key=True)
+    image_id = db.Column(db.Integer, db.ForeignKey('image.id', ondelete='CASCADE'))
+    embedding = db.Column(Vector(512), nullable=False)
 class Image(db.Model):
     __tablename__ = 'image'
     id = db.Column(db.Integer, primary_key=True)
     fileName = db.Column(db.String, nullable=False)
     #vector = db.Column(db.JSON, nullable=False)
     post_id = db.Column('postId',db.Integer, db.ForeignKey('post.id'))
-
+    dog_face = db.relationship(DogFace, backref="image", passive_deletes=True)
     post = db.relationship('Post', back_populates='images')
-
-class DogFace(db.Model):
-    __tablename__ = 'dog_faces'
-    face_id = db.Column(db.Integer, primary_key=True)
-    image_id = db.Column(db.Integer, db.ForeignKey('image.id'))
-    embedding = db.Column(Vector(512), nullable=False)
-
-    image = db.relationship('Image', backref=db.backref('faces', cascade='all,delete'))
 
 

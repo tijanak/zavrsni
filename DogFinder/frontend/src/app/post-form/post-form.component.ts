@@ -40,8 +40,7 @@ export class PostFormComponent {
     @Inject(MAT_DIALOG_DATA) public data: { looking_for: boolean }
   ) {
     this.postForm = this.fb.group({
-      title: [' ', Validators.required],
-      body: [' ', Validators.required],
+      description: [' '],
       looking_for: [this.data.looking_for],
       images: [FileList, maxImageAmount(10)],
     });
@@ -55,6 +54,7 @@ export class PostFormComponent {
     }
   }
   onSubmit(): void {
+    console.log(this.postForm.value);
     if (this.postForm.valid) {
       let formData = { ...this.postForm.value };
       this.dialogRef.close(formData);

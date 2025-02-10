@@ -7,7 +7,7 @@ CASCADE_SCALE = 1.1
 MIN_NEIGH = 5
 def remove_background(image):
     output_image = remove(image, alpha_matting=False)
-    
+
     if output_image.shape[2] == 4:
         rgb_image = np.zeros((output_image.shape[0], output_image.shape[1], 3), dtype=np.uint8)
         rgb_image[..., 0] = output_image[..., 0]
@@ -23,7 +23,7 @@ def is_gpu_available():
     return cv2.cuda.getCudaEnabledDeviceCount() > 0
 
 def detect_faces(image,cascadexml):
-    
+
     if is_gpu_available():
         cascade_gpu = cv2.cuda_CascadeClassifier.create(cascadexml)
         image_gpu = cv2.cuda_GpuMat()
@@ -33,7 +33,7 @@ def detect_faces(image,cascadexml):
     else:
         cascade_cpu = cv2.CascadeClassifier(cascadexml)
         faces = cascade_cpu.detectMultiScale(image, scaleFactor=CASCADE_SCALE, minNeighbors=MIN_NEIGH)
-    
+
     return faces
 def downscale_image(img, max_dimension: int = IMG_SIZE*2):
     height, width = img.shape[:2]
@@ -53,7 +53,7 @@ def downscale_image(img, max_dimension: int = IMG_SIZE*2):
         return img
 def process_image(image):
     image=downscale_image(image)
-    image = remove_background(image)
+    #image = remove_background(image)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     dogs = detect_faces(gray,'./preprocessing/cascade.xml')
     areas = []
@@ -72,14 +72,14 @@ def process_image(image):
         pad_bottom = max(0, y + h - image.shape[0])
         pad_left = max(0, -x)
         pad_right = max(0, x + w - image.shape[1])
-        
+
         padded_frame = cv2.copyMakeBorder(
-            image, 
-            top=pad_top, 
-            bottom=pad_bottom, 
-            left=pad_left, 
-            right=pad_right, 
-            borderType=cv2.BORDER_CONSTANT, 
+            image,
+            top=pad_top,
+            bottom=pad_bottom,
+            left=pad_left,
+            right=pad_right,
+            borderType=cv2.BORDER_CONSTANT,
             value=(0, 0, 0)
         )
 

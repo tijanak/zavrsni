@@ -1,7 +1,7 @@
 export interface IPost {
   id: number;
-  title: string;
-  body: string;
+  description: string;
+  time_created: Date;
   looking_for: boolean;
   creator: IUser;
   images: IImage[];
