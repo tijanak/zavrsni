@@ -21,7 +21,6 @@ def get_recommendations(post_id):
     post=get_post(post_id)
     query_embeddings=get_embeddings_for_post(post_id)
     result=find_recommended(query_embeddings,not post.looking_for)
-
     ids = [item['id'] for item in result]
     posts=get_posts_with_ids(ids)
     sorted_posts = [post for id in ids for post in posts if post.id == id]

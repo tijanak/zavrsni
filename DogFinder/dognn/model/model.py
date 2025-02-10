@@ -15,4 +15,5 @@ class Model(torch.nn.Module):
         torch.cuda.empty_cache()
         with torch.no_grad():
             img = img.to(device)
-            return F.normalize(self.model(img.unsqueeze(0))).flatten()
+            return self.model(img.unsqueeze(0)).flatten()
+
