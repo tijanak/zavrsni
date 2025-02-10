@@ -9,7 +9,7 @@ export class ImageListener {
   constructor(private readonly imageService: ImageService) {}
 
   @OnEvent('post.deleted')
-  async handleAuctionDeletedEvent(event: PostDeletedEvent) {
+  async handlePostDeletedEvent(event: PostDeletedEvent) {
     for (const image of event.images) {
       await this.imageService.deleteFile(image.fileName);
     }
