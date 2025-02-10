@@ -69,6 +69,8 @@ def get_opposite_post_images(post):
     except Exception as e:
         raise e
 def cosine_sim_query(query_embeddings):
+    if(len(query_embeddings)==0):
+        return ""
     embedding_comparisons = ["(embedding <=> CAST( :embedding_{} AS Vector(512)))".format(i) for i in range(len(query_embeddings))]
 
     similarity_best = "GREATEST(" + ", ".join(embedding_comparisons) + ")"
@@ -109,6 +111,8 @@ def euclidean_query(query_embeddings):
 
 def find_recommended(query_embeddings, looking_for_value=True):
     query = cosine_sim_query(query_embeddings)
+    if(len(query)==0):
+        return []
     query_params = {'looking_for_value': looking_for_value}
     for i, embedding_text in enumerate(query_embeddings):
         embedding_list = json.loads(embedding_text)

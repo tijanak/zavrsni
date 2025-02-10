@@ -74,8 +74,7 @@ export class ImagesController {
           let vector = [];
           try {
             Logger.log(image.id)
-            vector = await this.doggnnService.encode(path.join(imagesPath, file.filename),image.id);
-            Logger.log(vector);
+            this.doggnnService.encode(path.join(imagesPath, file.filename),image.id);
           } catch (e) {
             Logger.log(e);
           }
