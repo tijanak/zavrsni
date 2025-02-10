@@ -1,23 +1,27 @@
 <div *ngIf="post; else postNotFound" >
   <div class="container">
-    <div class="left post-container" style="flex-direction: row;">
+    <div class="post-container  ">
+    <div class="left " style="display: flex; flex-direction: row;">
       <app-post [post]="post" style="flex: 10;"></app-post>
       <div style="flex: 10; display: flex; flex-direction: column; align-items: center;">
         <h3 style="width: 100%; text-align: center;">Kontakt informacije</h3>
         <div *ngIf="post?.creator">
           <p style="text-align: center;">Kontakt osoba: {{ post.creator.name }} {{ post.creator.surname }}</p>
           <p style="text-align: center;">Broj telefona: {{ post.creator.phone_number }}</p>
-<p *ngIf="post.description && post.description.trim()" style="text-align: center;">
-  Dodatne informacije:{{ post.description }}
-</p>
-
+          <p *ngIf="post.description && post.description.trim()" style="text-align: center;">
+            Dodatne informacije:{{ post.description }}
+          </p>
         </div>
       </div>
       <div style="flex:1">
         <mat-icon *ngIf="user && post.creator.id === user.id" (click)="deletePost()">delete</mat-icon>
       </div>
-
     </div>
+    <div style="display: flex; flex-direction: row; justify-content: flex-start;">
+      <div style="flex: 1; text-align: left; margin-top: 20px; margin-left: 30px;">
+        <p>Objavljeno: {{ post.time_created | date:'dd.MM.yyyy. HH:mm' }}</p>
+      </div>
+    </div></div>
     <div class="right post-container">
       <div style="display: flex; align-items: center; justify-content: center;">
         <h2>Slicni psi</h2>

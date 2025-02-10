@@ -25,8 +25,7 @@ class Post(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'title': self.title,
-            'body': self.body,
+            'description': self.description,
             'looking_for': self.looking_for
         }
 
