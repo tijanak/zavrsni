@@ -12,7 +12,8 @@ class Model(torch.nn.Module):
         self.model.eval()
 
     def predict(self, img):
-        torch.cuda.empty_cache()
+        if(torch.cuda.is_available()):
+          torch.cuda.empty_cache()
         with torch.no_grad():
             img = img.to(device)
             return self.model(img.unsqueeze(0)).flatten()

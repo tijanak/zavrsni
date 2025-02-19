@@ -7,6 +7,33 @@ services:
       - .env
     volumes:
       - dogfinder_pgdata:/var/lib/postgresql/data
+  fd:
+    image: fd
+    restart: always
+    build:
+      context: ./face-detection/
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    env_file:
+      - .env.local
+    shm_size: '64gb'
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    develop:
+      watch:
+        - action: rebuild
+          path: ./face-detection/requirements.txt
+        - action: sync
+          path: ./face-detection/
+          target: /app/
+    volumes:
+      - dogfinder_fd_data:/app/
   dognn:
     image: dognn
     restart: always
@@ -34,6 +61,7 @@ services:
           target: /app/
     depends_on:
       - db
+      - fd
     volumes:
       - dogfinder_dognn_data:/app/
   backend:
@@ -91,3 +119,4 @@ volumes:
   dogfinder_backend_data:
   dogfinder_frontend_data:
   dogfinder_dognn_data:
+  dogfinder_fd_data:

@@ -105,12 +105,12 @@ def euclidean_query(query_embeddings):
     WHERE post.looking_for = :looking_for_value
     GROUP BY "postId", dog_faces.embedding
     ORDER BY "postId", similarity ASC
-    ) A WHERE A.similarity < 1 ORDER BY similarity ASC LIMIT 5
+    ) A ORDER BY similarity ASC LIMIT 5
     """
     return query
 
 def find_recommended(query_embeddings, looking_for_value=True):
-    query = cosine_sim_query(query_embeddings)
+    query = euclidean_query(query_embeddings)
     if(len(query)==0):
         return []
     query_params = {'looking_for_value': looking_for_value}

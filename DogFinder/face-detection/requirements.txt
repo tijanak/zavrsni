@@ -1,0 +1,7 @@
+Flask
+flask-cors
+flask_sqlalchemy
+keras_cv
+tensorflow
+opencv-python-headless
+Pillow

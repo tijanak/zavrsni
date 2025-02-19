@@ -87,6 +87,7 @@ def get_embeddings(post_id):
             'status': 'error',
             'message': str(e)
         }), 500
+
 @app.route('/predict/<int:image_id>', methods=['POST'])
 def predict(image_id):
     if 'file' not in request.files:
@@ -102,11 +103,8 @@ def predict(image_id):
 
         file.seek(0)
         image_bytes = file.read()
-        image=Image.open(io.BytesIO(image_bytes)).convert('RGB')
-        image_np = np.array(image)
 
-        image_np = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
-        dogs=process_image(image_np)
+        dogs=process_image(image_bytes)
         tensors=[]
         for dog in dogs:
             tensor = model.predict(imageLoader.load_img(dog))
