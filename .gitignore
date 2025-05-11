@@ -2,3 +2,5 @@
 
 DogFinder/dognn/model/weights.pt
 DogFinder/dognn/model/r18_trained.pt
+DogFinder/face-detection/yolo_dog_face_detection.weights.h5
+DogFinder/dognn/preprocessing/yolo_dog_face_detection.weights.h5

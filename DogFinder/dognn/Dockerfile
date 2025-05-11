@@ -13,7 +13,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir easydict mxnet onnx scikit-learn timm tensorboard scipy==1.7.3 && \
+RUN pip install --no-cache-dir easydict mxnet scikit-learn timm tensorboard scipy==1.7.3 && \
     pip install --no-cache-dir opencv-python-headless==4.5.5.64 pandas==1.3.5 && \
     pip install --no-cache-dir seaborn matplotlib && \
     pip install --no-cache-dir git+https://github.com/openai/CLIP.git

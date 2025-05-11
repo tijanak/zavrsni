@@ -40,12 +40,12 @@ export class HomeComponent {
     this.subscriptions.push(
       this.store
         .select(selectFoundPosts)
-        .subscribe((posts) => (this.foundPosts = posts))
+        .subscribe((posts) => (this.foundPosts = posts.sort((a, b) => new Date(b.time_created).getTime() - new Date(a.time_created).getTime())))
     );
     this.subscriptions.push(
       this.store
         .select(selectLostPosts)
-        .subscribe((posts) => (this.lostPosts = posts))
+        .subscribe((posts) => (this.lostPosts =posts.sort((a, b) => new Date(b.time_created).getTime() - new Date(a.time_created).getTime())))
     );
   }
 

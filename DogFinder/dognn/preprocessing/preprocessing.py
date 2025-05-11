@@ -27,6 +27,7 @@ def resize_with_padding(image, target_size=(224, 224)):
     padded_image[top_left_y:top_left_y+new_height, top_left_x:top_left_x+new_width] = resized_image
 
     return padded_image
+
 def process_image(image_bytes):
 
     response = requests.post('http://fd:8080/process', files={'file': image_bytes})

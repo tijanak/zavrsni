@@ -6,7 +6,7 @@ import json
 from model.similarity import cosine_search
 import io
 from app import app
-model = Model()
+model = ArcFace()
 imageLoader = ImageLoader()
 from app import app
 from flask import jsonify
@@ -19,6 +19,8 @@ import cv2
 def get_recommendations(post_id):
   try:
     post=get_post(post_id)
+    if(post is None):
+        return jsonify({"error": "Post not found"}), 404
     query_embeddings=get_embeddings_for_post(post_id)
     result=find_recommended(query_embeddings,not post.looking_for)
     ids = [item['id'] for item in result]
@@ -107,6 +109,7 @@ def predict(image_id):
         dogs=process_image(image_bytes)
         tensors=[]
         for dog in dogs:
+
             tensor = model.predict(imageLoader.load_img(dog))
             insert_dog_face(image_id,tensor)
             tensors.append(tensor.tolist())
