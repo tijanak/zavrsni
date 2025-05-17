@@ -10,9 +10,9 @@ import * as mime from 'mime-types';
 export class DognnService {
   axios = require('axios');
   constructor(private readonly httpService: HttpService) {
-    this.axios.get(`${environment.MODEL_URL}db`).then((response) => {
+    /*this.axios.get(`${environment.MODEL_URL}db`).then((response) => {
       Logger.log(response.data);
-    });
+    });*/
   }
 
   streamToBuffer = async (stream: Readable): Promise<Buffer> => {
