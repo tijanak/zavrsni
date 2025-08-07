@@ -15,6 +15,7 @@ import { PostsComponent } from '../../posts/posts.component';
 import { LostPostBtnComponent } from '../../../lost-post-btn/lost-post-btn.component';
 import { FoundPostBtnComponent } from '../../../found-post-btn/found-post-btn.component';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-home',
@@ -26,7 +27,7 @@ import { FormsModule } from '@angular/forms';
     LogoutComponent,
     PostsComponent,
     LostPostBtnComponent,
-    FoundPostBtnComponent,FormsModule
+    FoundPostBtnComponent,FormsModule,MatIconModule
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',

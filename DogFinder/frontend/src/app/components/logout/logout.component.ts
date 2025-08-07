@@ -6,10 +6,11 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.reducer';
 import { logout } from '../../store/auth/auth.actions';
 
+import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-logout',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, RouterModule],
+  imports: [CommonModule, MatButtonModule, RouterModule,MatIconModule],
   templateUrl: './logout.component.html',
   styleUrl: './logout.component.css',
 })
