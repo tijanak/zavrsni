@@ -29,7 +29,7 @@ export class FoundPostBtnComponent {
           uploadPost({
             postDto: {
               description: result.description,
-              looking_for: false,
+              looking_for: result.looking_for,
             },
             images: { ...result.images, length: result.images.length },
           })

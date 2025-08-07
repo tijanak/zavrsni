@@ -1,6 +1,7 @@
 <h1 mat-dialog-title>Nova objava</h1>
 <div mat-dialog-content>
   <form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+  
     <!--
     <mat-form-field appearance="fill">
       <mat-label>Naslov</mat-label>
@@ -11,6 +12,11 @@
       >
     </mat-form-field>
  -->
+     <mat-select formControlName="looking_for">
+    <mat-option [value]="true">Trazi se</mat-option>
+    <mat-option [value]="false">Pronadjen</mat-option>
+  </mat-select>
+  <br/>
     <mat-form-field appearance="fill">
       <mat-label>Informacije</mat-label>
       <textarea matInput formControlName="description" rows="4"></textarea>

@@ -16,7 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { maxImageAmount } from '../validators/max-image-amount-validator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { MatSelectModule } from '@angular/material/select';
 @Component({
   selector: 'app-post-form',
   standalone: true,
@@ -27,7 +27,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatDialogModule,
     MatInputModule,
     MatButtonModule,
-    MatProgressSpinnerModule,
+    MatProgressSpinnerModule,MatSelectModule
   ],
   templateUrl: './post-form.component.html',
   styleUrl: './post-form.component.css',
