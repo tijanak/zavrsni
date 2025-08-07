@@ -85,8 +85,8 @@ def cosine_sim_query(query_embeddings):
     JOIN post ON image."postId" = post.id
     WHERE post.looking_for = :looking_for_value
     GROUP BY "postId", dog_faces.embedding
-    ORDER BY  "postId", similarity DESC
-    ) A WHERE A.similarity > 0 ORDER BY similarity DESC LIMIT 5
+    ORDER BY  "postId", similarity ASC
+    ) A WHERE A.similarity > 0 ORDER BY similarity ASC LIMIT 5
     """
     return query
 def euclidean_query(query_embeddings):
@@ -110,7 +110,7 @@ def euclidean_query(query_embeddings):
     return query
 
 def find_recommended(query_embeddings, looking_for_value=True):
-    query = euclidean_query(query_embeddings)
+    query = cosine_sim_query(query_embeddings)
     if(len(query)==0):
         return []
     query_params = {'looking_for_value': looking_for_value}
