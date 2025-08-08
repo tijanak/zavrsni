@@ -93,7 +93,7 @@ def cosine_sim_query(query_embeddings):
         return ""
     embedding_comparisons = ["(embedding <=> CAST( :embedding_{} AS Vector(512)))".format(i) for i in range(len(query_embeddings))]
 
-    similarity_best = "GREATEST(" + ", ".join(embedding_comparisons) + ")"
+    similarity_best = "LEAST(" + ", ".join(embedding_comparisons) + ")"
 
     query = f"""
     SELECT * FROM (
@@ -164,7 +164,6 @@ def find_recommended(query_embeddings, looking_for_value=True):
         recommendations.append(post_info)
 
     return recommendations
-    # return [{"id": row[0],"sim":row[1]} for row in results]
 from sqlalchemy import text
 def get_embeddings_for_post(post_id):
     query = """
