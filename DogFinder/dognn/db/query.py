@@ -68,27 +68,6 @@ def get_opposite_post_images(post):
 
     except Exception as e:
         raise e
-def cosine_sim_query(query_embeddings):
-    if(len(query_embeddings)==0):
-        return ""
-    embedding_comparisons = ["(embedding <=> CAST( :embedding_{} AS Vector(512)))".format(i) for i in range(len(query_embeddings))]
-
-    similarity_best = "GREATEST(" + ", ".join(embedding_comparisons) + ")"
-
-    query = f"""
-    SELECT * FROM (
-    SELECT DISTINCT ON ("postId")
-        "postId",
-        {similarity_best} AS similarity
-    FROM dog_faces
-    JOIN image ON dog_faces.image_id = image.id
-    JOIN post ON image."postId" = post.id
-    WHERE post.looking_for = :looking_for_value
-    GROUP BY "postId", dog_faces.embedding
-    ORDER BY  "postId", similarity ASC
-    ) A WHERE A.similarity > 0 ORDER BY similarity ASC LIMIT 5
-    """
-    return query
 def euclidean_query(query_embeddings):
     embedding_comparisons = ["(embedding <-> CAST( :embedding_{} AS Vector(512)))".format(i) for i in range(len(query_embeddings))]
 
@@ -109,6 +88,52 @@ def euclidean_query(query_embeddings):
     """
     return query
 
+def cosine_sim_query(query_embeddings):
+    if(len(query_embeddings)==0):
+        return ""
+    embedding_comparisons = ["(embedding <=> CAST( :embedding_{} AS Vector(512)))".format(i) for i in range(len(query_embeddings))]
+
+    similarity_best = "GREATEST(" + ", ".join(embedding_comparisons) + ")"
+
+    query = f"""
+    SELECT * FROM (
+        SELECT DISTINCT ON (image."postId")
+            image."postId" AS "postId",
+            post.looking_for,
+            post.time_created,
+            post.description,
+            post."creatorId",
+            "user".id AS user_id,
+            "user".name AS user_name,
+            "user".email AS user_email,
+            "user".surname AS user_surname,
+            "user".phone_number AS phone_number,
+            {similarity_best} AS similarity
+        FROM dog_faces
+        JOIN image ON dog_faces.image_id = image.id
+        JOIN post ON image."postId" = post.id
+        JOIN "user" ON post."creatorId" = "user".id
+        WHERE post.looking_for = :looking_for_value
+        GROUP BY
+            image."postId",
+            post.looking_for,
+            post.time_created,
+            post.description,
+            post."creatorId",
+            "user".id,
+            "user".name,
+            "user".email,
+            "user".surname,
+            "user".phone_number,
+            dog_faces.embedding
+        ORDER BY image."postId", similarity ASC
+    ) AS A
+    WHERE A.similarity > 0
+    ORDER BY similarity ASC
+    LIMIT 5
+    """
+    return query
+
 def find_recommended(query_embeddings, looking_for_value=True):
     query = cosine_sim_query(query_embeddings)
     if(len(query)==0):
@@ -118,9 +143,28 @@ def find_recommended(query_embeddings, looking_for_value=True):
         embedding_list = json.loads(embedding_text)
         query_params[f"embedding_{i}"] = embedding_list
 
-    results = db.session.execute(text(query), query_params).fetchall()
+    results = db.session.execute(text(query), query_params).mappings().all()
+    recommendations = []
+    for row in results:
+        post_info = {
+            "id": row["postId"],
+            "looking_for": row["looking_for"],
+            "time_created": row["time_created"],
+            "description": row["description"],
+            "creatorId":row["creatorId"],
+            "creator": {
+                "id": row["user_id"],
+                "name": row["user_name"],
+                "email": row["user_email"],
+                "surname":row["user_surname"],
+                "phone_number":row["phone_number"]
+            },
+            "similarity": row["similarity"]
+        }
+        recommendations.append(post_info)
 
-    return [{"id": row[0],"sim":row[1]} for row in results]
+    return recommendations
+    # return [{"id": row[0],"sim":row[1]} for row in results]
 from sqlalchemy import text
 def get_embeddings_for_post(post_id):
     query = """

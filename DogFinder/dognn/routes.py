@@ -23,10 +23,6 @@ def get_recommendations(post_id):
         return jsonify({"error": "Post not found"}), 404
     query_embeddings=get_embeddings_for_post(post_id)
     result=find_recommended(query_embeddings,not post.looking_for)
-    ids = [item['id'] for item in result]
-    posts=get_posts_with_ids(ids)
-    sorted_posts = [post for id in ids for post in posts if post.id == id]
-    result = [post.to_dict() for post in sorted_posts]
     return jsonify(result)
 
   except Exception as e:
@@ -117,4 +113,80 @@ def predict(image_id):
         return response
     except Exception as e:
         app.logger.error(e)
+        return jsonify({"error": str(e)}), 500
+import os
+from math import ceil, sqrt
+@app.route('/generate_projector_files', methods=['GET'])
+def generate_projector_files():
+    try:
+        root_dir = 'test dogs'  
+        output_dir = 'projector_output'
+        image_size = (64, 64) 
+
+        os.makedirs(output_dir, exist_ok=True)
+
+        embeddings = []
+        labels = []
+        sprite_images = []
+
+        for dog_id in os.listdir(root_dir):
+            dog_folder = os.path.join(root_dir, dog_id)
+            if not os.path.isdir(dog_folder):
+                continue
+
+            for img_name in os.listdir(dog_folder):
+                if not img_name.lower().endswith(('.jpg', '.jpeg', '.png')):
+                    continue
+
+                img_path = os.path.join(dog_folder, img_name)
+
+                try:
+                    with open(img_path, 'rb') as f:
+                        image_bytes = f.read()
+                    app.logger.warning(img_path)
+                    dog_faces = process_image(image_bytes)
+
+                    for face in dog_faces:
+                        tensor = model.predict(imageLoader.load_img(face))
+                        tensor = tensor.cpu().detach().numpy()  
+                        embeddings.append(np.squeeze(tensor))
+                        labels.append(dog_id)
+
+                        face_img = Image.open(face) if isinstance(face, str) else Image.fromarray(face)
+                        face_img = face_img.convert("RGB").resize(image_size)
+                        sprite_images.append(face_img)
+
+                except Exception as e:
+                    app.logger.warning(f"Failed to process {img_path}: {e}")
+
+        if not embeddings:
+            return jsonify({"error": "No dog faces found in dataset."}), 400
+
+        np.savetxt(os.path.join(output_dir, 'embeddings.tsv'), embeddings, delimiter='\t')
+
+        with open(os.path.join(output_dir, 'metadata.tsv'), 'w') as f:
+            for label in labels:
+                f.write(f"{label}\n")
+
+        def create_sprite(images, image_size, out_path):
+            grid_size = ceil(sqrt(len(images)))
+            sprite_image = Image.new('RGB', (grid_size * image_size[0], grid_size * image_size[1]), (255, 255, 255))
+
+            for idx, img in enumerate(images):
+                row = idx // grid_size
+                col = idx % grid_size
+                sprite_image.paste(img, (col * image_size[0], row * image_size[1]))
+
+            sprite_image.save(out_path)
+
+        create_sprite(sprite_images, image_size, os.path.join(output_dir, 'sprite.png'))
+
+        return jsonify({
+            "status": "success",
+            "message": f"Projector files generated in {output_dir}",
+            "embeddings_count": len(embeddings)
+        }), 200
+
+    except Exception as e:
+        app.logger.error(f"Failed to generate projector files: {e}")
         return jsonify({"error": str(e)}), 500

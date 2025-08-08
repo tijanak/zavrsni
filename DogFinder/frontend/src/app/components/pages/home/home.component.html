@@ -14,11 +14,11 @@
   <div *ngIf="selectedType === 'lost'">
     <app-lost-post-btn></app-lost-post-btn>
     <h2 class="post-type-header">Traze se</h2>
-    <app-posts [posts]="lostPosts"></app-posts>
+    <div class=""><app-posts [posts]="lostPosts"></app-posts></div>
   </div>
   <div *ngIf="selectedType === 'found'">
     <app-found-post-btn></app-found-post-btn>
     <h2 class="post-type-header">Pronadjeni</h2>
-    <app-posts [posts]="foundPosts"></app-posts>
+    <div class=""><app-posts [posts]="foundPosts"></app-posts></div>
   </div>
 </div>
