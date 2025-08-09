@@ -14,6 +14,7 @@ import { AuthModule } from '../auth/auth.module';
 import { ImageModule } from '../image/image.module';
 import { DogNNModule } from '../dognn/dognn.module';
 
+
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
@@ -31,7 +32,7 @@ import { DogNNModule } from '../dognn/dognn.module';
     UserModule,
     AuthModule,
     ImageModule,
-    DogNNModule,
+    DogNNModule
   ],
   controllers: [AppController],
   providers: [AppService],

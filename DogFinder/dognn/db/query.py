@@ -97,34 +97,17 @@ def cosine_sim_query(query_embeddings):
 
     query = f"""
     SELECT * FROM (
-        SELECT DISTINCT ON (image."postId")
-            image."postId" AS "postId",
-            post.looking_for,
-            post.time_created,
-            post.description,
-            post."creatorId",
-            "user".id AS user_id,
-            "user".name AS user_name,
-            "user".email AS user_email,
-            "user".surname AS user_surname,
-            "user".phone_number AS phone_number,
-            {similarity_best} AS similarity
+        SELECT DISTINCT ON (image."postId")image."postId" AS "postId",post.looking_for,post.time_created, post.description,post."creatorId",
+        "user".id AS user_id,"user".name AS user_name,"user".email AS user_email,"user".surname AS user_surname,"user".phone_number AS phone_number,
+        {similarity_best} AS similarity
         FROM dog_faces
         JOIN image ON dog_faces.image_id = image.id
         JOIN post ON image."postId" = post.id
         JOIN "user" ON post."creatorId" = "user".id
         WHERE post.looking_for = :looking_for_value
         GROUP BY
-            image."postId",
-            post.looking_for,
-            post.time_created,
-            post.description,
-            post."creatorId",
-            "user".id,
-            "user".name,
-            "user".email,
-            "user".surname,
-            "user".phone_number,
+            image."postId",post.looking_for,post.time_created,post.description,post."creatorId",
+            "user".id,"user".name,"user".email,"user".surname,"user".phone_number,
             dog_faces.embedding
         ORDER BY image."postId", similarity ASC
     ) AS A
@@ -134,16 +117,34 @@ def cosine_sim_query(query_embeddings):
     """
     return query
 
-def find_recommended(query_embeddings, looking_for_value=True):
-    query = cosine_sim_query(query_embeddings)
-    if(len(query)==0):
+def find_recommended(post_id):
+    query = """
+    SELECT dog_faces.embedding, post.looking_for
+    FROM dog_faces
+    JOIN image ON dog_faces.image_id = image.id
+    JOIN post ON image."postId" = post.id
+    WHERE post.id = :post_id
+    """
+    result = db.session.execute(text(query), {'post_id': post_id}).fetchall()
+
+    if not result:
         return []
-    query_params = {'looking_for_value': looking_for_value}
-    for i, embedding_text in enumerate(query_embeddings):
+
+    embeddings = [row[0] for row in result]
+    looking_for = not result[0][1]
+
+    similarity_query = cosine_sim_query(embeddings)
+
+    if not similarity_query:
+        return []
+
+    query_params = {'looking_for_value': looking_for}
+    for i, embedding_text in enumerate(embeddings):
         embedding_list = json.loads(embedding_text)
         query_params[f"embedding_{i}"] = embedding_list
 
-    results = db.session.execute(text(query), query_params).mappings().all()
+    results = db.session.execute(text(similarity_query), query_params).mappings().all()
+
     recommendations = []
     for row in results:
         post_info = {
@@ -151,19 +152,20 @@ def find_recommended(query_embeddings, looking_for_value=True):
             "looking_for": row["looking_for"],
             "time_created": row["time_created"],
             "description": row["description"],
-            "creatorId":row["creatorId"],
+            "creatorId": row["creatorId"],
             "creator": {
                 "id": row["user_id"],
                 "name": row["user_name"],
                 "email": row["user_email"],
-                "surname":row["user_surname"],
-                "phone_number":row["phone_number"]
+                "surname": row["user_surname"],
+                "phone_number": row["phone_number"]
             },
             "similarity": row["similarity"]
         }
         recommendations.append(post_info)
 
     return recommendations
+
 from sqlalchemy import text
 def get_embeddings_for_post(post_id):
     query = """

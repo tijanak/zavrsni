@@ -18,11 +18,7 @@ import cv2
 @app.route('/matches/<int:post_id>', methods=['GET'])
 def get_recommendations(post_id):
   try:
-    post=get_post(post_id)
-    if(post is None):
-        return jsonify({"error": "Post not found"}), 404
-    query_embeddings=get_embeddings_for_post(post_id)
-    result=find_recommended(query_embeddings,not post.looking_for)
+    result=find_recommended(post_id)
     return jsonify(result)
 
   except Exception as e:
