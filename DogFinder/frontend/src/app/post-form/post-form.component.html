@@ -12,14 +12,14 @@
       >
     </mat-form-field>
  -->
-     <mat-select formControlName="looking_for">
+     <mat-select id="looking-for-select" formControlName="looking_for">
     <mat-option [value]="true">Trazi se</mat-option>
     <mat-option [value]="false">Pronadjen</mat-option>
   </mat-select>
   <br/>
     <mat-form-field appearance="fill">
       <mat-label>Informacije</mat-label>
-      <textarea matInput formControlName="description" rows="4"></textarea>
+      <textarea id="description-input" matInput formControlName="description" rows="4"></textarea>
       <!--<mat-error
         *ngIf="postForm.get('body')?.invalid && postForm.get('body')?.touched"
         >Opis je obavezno polje</mat-error
@@ -29,6 +29,7 @@
     <mat-label>Slike</mat-label>
     <br />
     <input
+    id="image-upload-input"
       type="file"
       accept="image/*"
       (change)="onFileChange($event)"
@@ -41,7 +42,7 @@
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onCancel()">Otkazi</button>
-  <button mat-button color="primary" (click)="onSubmit()" type="submit">
+  <button id="submit-post-btn" mat-button color="primary" (click)="onSubmit()" type="submit">
     Objavi
   </button>
 </div>
