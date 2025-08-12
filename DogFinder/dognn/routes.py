@@ -187,32 +187,65 @@ def generate_projector_files():
     except Exception as e:
         app.logger.error(f"Failed to generate projector files: {e}")
         return jsonify({"error": str(e)}), 500
+import csv
 @app.route('/calculate_topk',methods=['GET'])
 def calculate_topk():
     try:
         posts=get_all_posts()
         topk=[0,0,0,0,0]
         num_posts=0
-
+        details = []
         for post in posts:
             if "-" in post.description:
                 continue
             num_posts+=1
             matches=find_recommended(post.id)
 
-            match_found=False
+            
+            match_index = None
             for i in range(min(5,len(matches))):
                 if matches[i]['description']==post.description:
-                    match_found=True
+                    match_index = i
                     break
-            if match_found:
-                for j in range(i,5):
-                    topk[j]+=1
+            if match_index is not None:
+                for j in range(match_index, 5):
+                    topk[j] += 1
+            details.append({
+                'post_id': post.id,
+                'label': post.description,
+                'match_index': match_index,
+                'recommended_ids': [m['id'] for m in matches],
+                'recommended_labels':[m['description'].split(' - ')[0] for m in matches]
+            })
         for i in range(5):
             topk[i]=(topk[i]/num_posts)*100
+        with open('topk_results.csv', mode='w', newline='', encoding='utf-8') as csvfile:
+            fieldnames = ['post_id', 'label', 'match_index', 'recommended_ids', 'recommended_labels']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            writer.writeheader()
+            for item in details:
+                writer.writerow({
+                    'post_id': item['post_id'],
+                    'label': item['label'],
+                    'match_index': item['match_index'] if item['match_index'] is not None else '',
+                    'recommended_ids': ', '.join(str(id) for id in item['recommended_ids']),
+                    'recommended_labels': ', '.join(item['recommended_labels'])
+                })
+
+            writer.writerow({})
+
+            writer.writerow({
+                'post_id': 'TOP-K Accuracy (%)',
+                'label': '',
+                'match_index': '',
+                'recommended_ids': ', '.join([f'Top-{i+1}: {topk[i]:.2f}%' for i in range(5)]),
+                'recommended_labels': ''
+            })
         return jsonify({
             'topk':topk,
-            'num_posts':num_posts/2
+            'num_posts':num_posts/2,
+            'details': details
         })
     except Exception as e:
         return jsonify({'error':str(e)}),400
