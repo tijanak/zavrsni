@@ -34,7 +34,6 @@ def process_image(image_bytes):
     image=Image.open(io.BytesIO(image_bytes)).convert('RGB')
     image_np = np.array(image)
 
-    image_np = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
     faces=[]
     for box in response.json():
         x1, y1, x2, y2 = map(int, box)

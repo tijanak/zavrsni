@@ -10,7 +10,7 @@ model = ArcFace()
 imageLoader = ImageLoader()
 from app import app
 from flask import jsonify
-from db.query import get_post, get_images_from_posts, get_post_images,get_opposite_posts,get_posts_with_ids,insert_dog_face,get_embeddings_for_post,find_recommended
+from db.query import get_post, get_images_from_posts, get_post_images,get_opposite_posts,get_posts_with_ids,insert_dog_face,get_embeddings_for_post,find_recommended,get_all_posts
 from preprocessing.preprocessing import process_image
 from PIL import Image
 import numpy as np
@@ -130,30 +130,31 @@ def generate_projector_files():
             if not os.path.isdir(dog_folder):
                 continue
 
-            for img_name in os.listdir(dog_folder):
-                if not img_name.lower().endswith(('.jpg', '.jpeg', '.png')):
-                    continue
+            for dirpath, _, filenames in os.walk(dog_folder):
+                for img_name in filenames:
+                    if not img_name.lower().endswith(('.jpg', '.jpeg', '.png')):
+                        continue
 
-                img_path = os.path.join(dog_folder, img_name)
+                    img_path = os.path.join(dirpath, img_name)
 
-                try:
-                    with open(img_path, 'rb') as f:
-                        image_bytes = f.read()
-                    app.logger.warning(img_path)
-                    dog_faces = process_image(image_bytes)
+                    try:
+                        with open(img_path, 'rb') as f:
+                            image_bytes = f.read()
+                        app.logger.warning(img_path)
+                        dog_faces = process_image(image_bytes)
 
-                    for face in dog_faces:
-                        tensor = model.predict(imageLoader.load_img(face))
-                        tensor = tensor.cpu().detach().numpy()  
-                        embeddings.append(np.squeeze(tensor))
-                        labels.append(dog_id)
+                        for face in dog_faces:
+                            tensor = model.predict(imageLoader.load_img(face))
+                            tensor = tensor.cpu().detach().numpy()  
+                            embeddings.append(np.squeeze(tensor))
+                            labels.append(dog_id)
 
-                        face_img = Image.open(face) if isinstance(face, str) else Image.fromarray(face)
-                        face_img = face_img.convert("RGB").resize(image_size)
-                        sprite_images.append(face_img)
+                            face_img = Image.open(face) if isinstance(face, str) else Image.fromarray(face)
+                            face_img = face_img.convert("RGB").resize(image_size)
+                            sprite_images.append(face_img)
 
-                except Exception as e:
-                    app.logger.warning(f"Failed to process {img_path}: {e}")
+                    except Exception as e:
+                        app.logger.warning(f"Failed to process {img_path}: {e}")
 
         if not embeddings:
             return jsonify({"error": "No dog faces found in dataset."}), 400
@@ -186,3 +187,31 @@ def generate_projector_files():
     except Exception as e:
         app.logger.error(f"Failed to generate projector files: {e}")
         return jsonify({"error": str(e)}), 500
+@app.route('/calculate_topk',methods=['GET'])
+def calculate_topk():
+    try:
+        posts=get_all_posts()
+        topk=[0,0,0,0,0]
+        num_posts=0
+
+        for post in posts:
+            if "-" in post.description:
+                continue
+            num_posts+=1
+            matches=find_recommended(post.id)
+
+            match_found=False
+            for i in range(min(5,len(matches))):
+                if matches[i]['description']==post.description:
+                    match_found=True
+                    break
+            if match_found:
+                for j in range(i,5):
+                    topk[j]+=1
+        for i in range(5):
+            topk[i]=(topk[i]/num_posts)*100
+        return jsonify({
+            'topk':topk
+        })
+    except Exception as e:
+        return jsonify({'error':str(e)}),400

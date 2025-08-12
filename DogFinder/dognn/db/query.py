@@ -15,6 +15,12 @@ def get_post_images(post):
                 })
 
     return result
+def get_all_posts():
+    try:
+        posts=Post.query.all()
+        return posts
+    except Exception as e:
+        raise e
 def get_post(post_id):
     try:
         post = Post.query.get(post_id)
