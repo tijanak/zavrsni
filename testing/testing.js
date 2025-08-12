@@ -64,7 +64,7 @@ async function uploadDogPost(page, type, description, images) {
 
   await page.click('#submit-post-btn');
 
-  await sleep(3000);
+  await sleep(5000);
 }
 
 async function uploadPostsAsUser(user, type) {

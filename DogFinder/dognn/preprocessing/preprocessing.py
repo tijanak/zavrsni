@@ -8,7 +8,11 @@ from app import app
 def resize_with_padding(image, target_size=(224, 224)):
     original_height, original_width = image.shape[:2]
     target_height, target_width = target_size
+    
 
+    padded_image = np.zeros((target_height, target_width, 3), dtype=np.uint8)
+    if original_height==0 or original_width==0:
+        return padded_image
     scale_x = target_width / original_width
     scale_y = target_height / original_height
 
@@ -18,8 +22,6 @@ def resize_with_padding(image, target_size=(224, 224)):
     new_height = int(original_height * scale)
 
     resized_image = cv2.resize(image, (new_width, new_height))
-
-    padded_image = np.zeros((target_height, target_width, 3), dtype=np.uint8)
 
     top_left_y = (target_height - new_height) // 2
     top_left_x = (target_width - new_width) // 2

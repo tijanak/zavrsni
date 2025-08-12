@@ -211,7 +211,8 @@ def calculate_topk():
         for i in range(5):
             topk[i]=(topk[i]/num_posts)*100
         return jsonify({
-            'topk':topk
+            'topk':topk,
+            'num_posts':num_posts/2
         })
     except Exception as e:
         return jsonify({'error':str(e)}),400
