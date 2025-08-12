@@ -117,7 +117,6 @@ def cosine_sim_query(query_embeddings):
             dog_faces.embedding
         ORDER BY image."postId", similarity ASC
     ) AS A
-    WHERE A.similarity > 0
     ORDER BY similarity ASC
     LIMIT 5
     """
