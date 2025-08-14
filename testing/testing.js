@@ -7,30 +7,40 @@ const DOGS_DIR = './test_dogs';
 const LOST_USER = {
   email: 'petar.petrovic@gmail.com',
   password: 'Mysecretpassword123*',
+  name: 'Petar',
+  surname: 'Petrović',
+  phoneNumber: '+3810691233214',
 };
 
 const FOUND_USER = {
   email: 'jovana.jovanovic@gmail.com',
   password: 'Mysecretpassword123*',
+  name: 'Jovana',
+  surname: 'Jovanović',
+  phoneNumber: '+3810633214006',
 };
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function login(page, email, password) {
-  await page.goto('http://localhost:4200/login');
+async function register(page, user) {
+  await page.goto('http://localhost:4200/register');
 
   await page.waitForSelector('form.register-form');
 
-  await page.type('input[formcontrolname="email"]', email);
-  await page.type('input[formcontrolname="password"]', password);
+  await page.type('#name-input', user.name);
+  await page.type('#surname-input', user.surname);
+  await page.type('#email-input', user.email);
+  await page.type('#password-input', user.password);
+  await page.type('#phone-input', user.phoneNumber);
 
   await Promise.all([
-    page.click('form.register-form button[type="submit"]'),
+    page.click('#register-btn'),
     page.waitForNavigation({ waitUntil: 'networkidle0' }),
   ]);
 
-  console.log(`Logged in as ${email}`);
+  console.log(`Registered user ${user.email}`);
 }
+
 
 async function selectMatOptionByText(page, text) {
   await page.click('#looking-for-select');
@@ -64,14 +74,14 @@ async function uploadDogPost(page, type, description, images) {
 
   await page.click('#submit-post-btn');
 
-  await sleep(5000);
+  await sleep(3000);
 }
 
 async function uploadPostsAsUser(user, type) {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
 
-  await login(page, user.email, user.password);
+  await register(page, user);
   await page.goto('http://localhost:4200/home');
 
   const folders = fs.readdirSync(DOGS_DIR, { withFileTypes: true })

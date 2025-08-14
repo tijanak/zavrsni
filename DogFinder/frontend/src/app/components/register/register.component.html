@@ -9,7 +9,7 @@
 
     <mat-form-field appearance="fill">
       <mat-label>Ime</mat-label>
-      <input matInput formControlName="name" />
+      <input id="name-input" matInput formControlName="name" />
       <mat-error *ngIf="registerForm.controls['name'].hasError('required')">
         Ime je obavezno polje
       </mat-error>
@@ -17,7 +17,7 @@
 
     <mat-form-field appearance="fill">
       <mat-label>Prezime</mat-label>
-      <input matInput formControlName="surname" />
+      <input id="surname-input" matInput formControlName="surname" />
       <mat-error *ngIf="registerForm.controls['surname'].hasError('required')">
         Prezime je obavezno polje
       </mat-error>
@@ -25,7 +25,7 @@
 
     <mat-form-field appearance="fill">
       <mat-label>Email</mat-label>
-      <input matInput formControlName="email" />
+      <input id="email-input"  matInput formControlName="email" />
       <mat-error *ngIf="registerForm.controls['email'].hasError('required')">
         Email je obavezno polje
       </mat-error>
@@ -36,7 +36,7 @@
 
     <mat-form-field appearance="fill">
       <mat-label>Lozinka</mat-label>
-      <input matInput type="password" formControlName="password" />
+      <input id="password-input"  matInput type="password" formControlName="password" />
       <mat-error *ngIf="registerForm.controls['password'].hasError('required')">
         Lozinka je obavezno polje
       </mat-error>
@@ -44,7 +44,7 @@
 
     <mat-form-field appearance="fill">
       <mat-label>Broj telefona</mat-label>
-      <input matInput formControlName="phoneNumber" />
+      <input  id="phone-input" matInput formControlName="phoneNumber" />
       <mat-error
         *ngIf="registerForm.controls['phoneNumber'].hasError('required')"
       >
@@ -57,7 +57,7 @@
       </mat-error>
     </mat-form-field>
 
-    <button
+    <button id="register-btn"
       mat-raised-button
       color="primary"
       type="submit"
